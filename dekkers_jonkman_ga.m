@@ -4,8 +4,8 @@ function [xopt, fopt] = dekkers_jonkman_ga(n, eval_budget)
     plotting = true;
     
 	% Set crossover and mutation rate %
-	crossover_rate = 0.5;
-	mutation_rate = 0.5;
+	crossover_rate = 0.75;
+	mutation_rate = 0.08;
 
 	% Initialize population %
 	pop_size = 50;
@@ -14,11 +14,13 @@ function [xopt, fopt] = dekkers_jonkman_ga(n, eval_budget)
 	for i=1:pop_size
 		population(i,:) = rand(n, 1) > 0.5; % randomly initialize solution i
 		fitness(i) = labs(population(i,:)); % calculate fitness for solution i
-	end
-
+    end
+    i=0;
+    evaluations = 0;
 	% Evolution loop %
-	for i=1:eval_budget
-		new_population = zeros(pop_size, n); % declare new population (children)
+	while evaluations < eval_budget
+		i = i+1
+        new_population = zeros(pop_size, n); % declare new population (children)
 		new_fitness = zeros(pop_size, 1); % declare new population fitness values
 		j=1;
 		while j <= pop_size
@@ -42,7 +44,8 @@ function [xopt, fopt] = dekkers_jonkman_ga(n, eval_budget)
 			new_fitness(j+1) = labs(candidate2);
 
 			j = j+2;
-		end
+            evaluations = evaluations+2;
+        end
 
 		% Merge parent and children population, with their fitnesses. 
 		% Sort based on fitness values, in ascending order

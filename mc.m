@@ -39,8 +39,8 @@ function [xopt, fopt] = mc(n, eval_budget)
 			subplot(2, 1, 1)
 			plot(histf(1:eval_count+1))
 			subplot(2,1,2)
-            disp(xopt)
-			bar([1:n], fopt)
+            %disp(xopt)
+			%bar([1:n], fopt)
 			xlim([1 n])
 			drawnow();
         end

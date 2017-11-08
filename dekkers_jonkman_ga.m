@@ -1,6 +1,8 @@
 function [xopt, fopt] = dekkers_jonkman_ga(n, eval_budget)
 	tic
 
+    is_plot = true;
+    
 	% Set crossover and mutation rate %
 	crossover_rate = 0.5;
 	mutation_rate = 0.5;
@@ -40,14 +42,39 @@ function [xopt, fopt] = dekkers_jonkman_ga(n, eval_budget)
 			new_fitness(j+1) = labs(candidate2);
 
 			j = j+2;
-		end
+        end
 
-		both_pops = [vertcat(fitness,new_fitness), vertcat(population, new_population)];
+        % Merge parent and children population, with their fitnesses. 
+        % Sort based on fitness values, in ascending order
+		both_pops = [vertcat(fitness, new_fitness), vertcat(population, new_population)];
 		both_pops = sortrows(both_pops);
+        
+        % The last half of the population contains the candidates with the
+        % highest fitnesses, so keep those candidates for the next
+        % iteration
 		population = both_pops(pop_size+1:pop_size*2, 2:1+n);
 		fitness = both_pops(pop_size+1:pop_size*2, 1);
+
+        % Find values of the best candidates
+        fopt = fitness(pop_size)
+        xopt = population(pop_size,:)
+
+        % Statistics maintenance and plotting
+		if is_plot
+			histf(i+1:i+1) = fopt;
+			subplot(2, 1, 1)
+			plot(histf(1:i+1))
+			subplot(2,1,2)
+            disp(xopt)
+			bar([1:n], fopt)
+			xlim([1 n])
+			drawnow();
+        end
 	end
 	toc
+    
+    fopt = fitness(pop_size)
+    xopt = population(pop_size,:)
 end
 
 function [candidate] = mutation(candidate, mutation_rate, len)

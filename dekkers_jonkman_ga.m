@@ -1,14 +1,14 @@
 function [xopt, fopt] = dekkers_jonkman_ga(n, eval_budget)
 	tic
 
-    is_plot = true;
+    plotting = true;
     
 	% Set crossover and mutation rate %
 	crossover_rate = 0.5;
 	mutation_rate = 0.5;
 
 	% Initialize population %
-	pop_size = 2;
+	pop_size = 50;
 	population = zeros(pop_size, n); % declare pop_size solution vectors of length n
 	fitness = zeros(pop_size, 1); % declare pop_size fitness values
 	for i=1:pop_size
@@ -42,39 +42,38 @@ function [xopt, fopt] = dekkers_jonkman_ga(n, eval_budget)
 			new_fitness(j+1) = labs(candidate2);
 
 			j = j+2;
-        end
+		end
 
-        % Merge parent and children population, with their fitnesses. 
-        % Sort based on fitness values, in ascending order
+		% Merge parent and children population, with their fitnesses. 
+		% Sort based on fitness values, in ascending order
 		both_pops = [vertcat(fitness, new_fitness), vertcat(population, new_population)];
 		both_pops = sortrows(both_pops);
-        
-        % The last half of the population contains the candidates with the
-        % highest fitnesses, so keep those candidates for the next
-        % iteration
+
+		% The last half of the population contains the candidates with the
+		% highest fitnesses, so keep those candidates for the next
+		% iteration
 		population = both_pops(pop_size+1:pop_size*2, 2:1+n);
 		fitness = both_pops(pop_size+1:pop_size*2, 1);
 
-        % Find values of the best candidates
-        fopt = fitness(pop_size)
-        xopt = population(pop_size,:)
+		% Find values of the best candidates
+		fopt = fitness(pop_size);
+		xopt = population(pop_size,:);
 
-        % Statistics maintenance and plotting
-		if is_plot
-			histf(i+1:i+1) = fopt;
+		% Statistics maintenance and plotting
+		if plotting
 			subplot(2, 1, 1)
+			histf(i+1:i+1) = fopt;
 			plot(histf(1:i+1))
 			subplot(2,1,2)
-            disp(xopt)
-			bar([1:n], fopt)
+			bar([1:n], xopt)
 			xlim([1 n])
 			drawnow();
-        end
+		end
 	end
 	toc
-    
-    fopt = fitness(pop_size)
-    xopt = population(pop_size,:)
+
+	fopt = fitness(pop_size);
+	xopt = population(pop_size,:);
 end
 
 function [candidate] = mutation(candidate, mutation_rate, len)

@@ -1,7 +1,7 @@
 function [xopt, fopt] = dekkers_jonkman_ga(n, eval_budget)
 	tic
 
-    plotting = true;
+    plotting = false;
     
 	% Set crossover and mutation rate %
 	crossover_rate = 0.75;
@@ -15,15 +15,14 @@ function [xopt, fopt] = dekkers_jonkman_ga(n, eval_budget)
 		population(i,:) = rand(n, 1) > 0.5; % randomly initialize solution i
 		fitness(i) = labs(population(i,:)); % calculate fitness for solution i
     end
-    i=0;
-    evaluations = 0;
-	% Evolution loop %
-	while evaluations < eval_budget
-		i = i+1
+    
+    % Evolution loop %
+    i = 0;
+	while i <= eval_budget
         new_population = zeros(pop_size, n); % declare new population (children)
 		new_fitness = zeros(pop_size, 1); % declare new population fitness values
-		j=1;
-		while j <= pop_size
+
+		for j=1:2:pop_size
 			% Select two candidates using roulette wheel selection
 			candidate1 = population(roulette_select(fitness), :);
 			candidate2 = population(roulette_select(fitness), :);
@@ -43,8 +42,7 @@ function [xopt, fopt] = dekkers_jonkman_ga(n, eval_budget)
 			new_fitness(j) = labs(candidate1);
 			new_fitness(j+1) = labs(candidate2);
 
-			j = j+2;
-            evaluations = evaluations+2;
+			i = i + 2;
         end
 
 		% Merge parent and children population, with their fitnesses. 
@@ -53,7 +51,7 @@ function [xopt, fopt] = dekkers_jonkman_ga(n, eval_budget)
 		both_pops = sortrows(both_pops);
 
 		% The last half of the population contains the candidates with the
-		% highest fitnesses, so keep those candidates for the next
+		% highest fitness, so keep those candidates for the next
 		% iteration
 		population = both_pops(pop_size+1:pop_size*2, 2:1+n);
 		fitness = both_pops(pop_size+1:pop_size*2, 1);
@@ -65,8 +63,11 @@ function [xopt, fopt] = dekkers_jonkman_ga(n, eval_budget)
 		% Statistics maintenance and plotting
 		if plotting
 			subplot(2, 1, 1)
-			histf(i+1:i+1) = fopt;
-			plot(histf(1:i+1))
+			for j=i-pop_size+1:i
+				histf(j:j) = fopt;
+			end
+			plot(histf(1:i))
+
 			subplot(2,1,2)
 			bar([1:n], xopt)
 			xlim([1 n])

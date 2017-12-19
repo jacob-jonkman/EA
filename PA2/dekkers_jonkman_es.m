@@ -11,33 +11,27 @@ function [xopt,fopt] = dekkers_jonkman_es(eval_budget)
     pop = rand(pop_size,layers).*max_thickness; % randomly initialize population
     sigmas = zeros(pop_size,layers); % initialize individual sigmas
     sigmas(1:pop_size,1:layers) = max_thickness/4;
-    %fitnesses = zeros(1,lambda);
-    
-    %for i=1:pop_size
-    %    i
-    %    fitnesses(:,1) = optical(pop(i,:)); % initialize population fitnesses
-    %end
     
     for i = 1:eval_budget/lambda
+        i
         [offspring, newsigmas] = recombine(pop, sigmas, lambda, pop_size, layers, recomb_rate);
         [offspring, newsigmas] = mutate(offspring, newsigmas, lambda, mut_rate, tau, tauprime);
         fitnesses = zeros(1, lambda);
+        tic
         for j = 1:lambda
             fitnesses(1,j) = str2num(optical(offspring(j,:)));
         end
+        toc
         [pop,sigmas] = select(offspring, fitnesses, newsigmas, pop_size, layers);
         min(fitnesses)
     end
 end
 
 function [pop, sigmas] = select(offspring, fitnesses, newsigmas, pop_size, layers)
-    pop = zeros(pop_size, layers);
-    sigmas = zeros(pop_size, layers);
-    %Pak daadwerkelijk pop_size kinderen ipv ze allemaal
     [~,idx] = sort(fitnesses);
-    pop = offspring(idx);
-    sigmas = newsigmas(idx);
-    %
+    bestidx = idx(1,1:pop_size);
+    pop = offspring(bestidx,:);
+    sigmas = newsigmas(bestidx,:);
 end
 
 function [offspring, newsigmas] = mutate(offspring, newsigmas, lambda, mut_rate, tau, tauprime)

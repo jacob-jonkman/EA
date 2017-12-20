@@ -29,18 +29,18 @@ function [xopt,fopt] = dekkers_jonkman_es(eval_budget)
 		end
 
 		% select individuals for new population
-		[pop,sigmas] = select(offspring, fitnesses, newsigmas, mu, layers);
+		[pop,sigmas] = select(offspring, fitnesses, newsigmas, mu);
 		fopt = min(fitnesses)
 		fprintf(fileID, '%5.4f,', fopt);
 	end
 	fprintf(fileID, '\n');
 	[~,idx] = sort(fitnesses);
-	xopt = pop(idx(1,1));
-	fopt = fitnesses(idx(1,1));
+    xopt = offspring(idx(1,1), :)
+	fopt = fitnesses(idx(1,1))
 end
 
 % Applies selection to a solution vector
-function [pop, sigmas] = select(offspring, fitnesses, newsigmas, mu, layers)
+function [pop, sigmas] = select(offspring, fitnesses, newsigmas, mu)
 	[~,idx] = sort(fitnesses);
 	bestidx = idx(1,1:mu);
 	pop = offspring(bestidx,:);
@@ -52,7 +52,7 @@ function [offspring, newsigmas] = mutate(offspring, newsigmas, lambda, mut_rate,
 	for i=1:lambda
 		if rand() < mut_rate
 			newsigmas(i,:) = newsigmas(i,:) * exp(tauprime * randn + tau * randn);
-			offspring(i,:) = offspring(i,:) + newsigmas(i,:) * randn;
+			offspring(i,:) = offspring(i,:) + max(newsigmas(i,:) * randn, 0);
 		end
 	end
 end

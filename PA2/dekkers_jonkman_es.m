@@ -1,9 +1,10 @@
 function [xopt,fopt] = dekkers_jonkman_es(eval_budget, iter)
-	fileID  = fopen('tests/mean1.txt', 'a');
+	tic
+	fileID  = fopen('tests/mean3.txt', 'a');% TODO delete this statement
 	max_thickness = 10000; % search space [0,10000] nm
 	
-	mu = 50; % parent population size
-	lambda = 100; % offspring population size
+	mu = 100; % parent population size
+	lambda = 500; % offspring population size
 	layers = 30; % number of layers in multilayered system
 	
 	recomb_rate = 0.75; % recombination probability
@@ -30,14 +31,15 @@ function [xopt,fopt] = dekkers_jonkman_es(eval_budget, iter)
 
 		% select individuals for new population
 		[pop,sigmas] = select(offspring, fitnesses, newsigmas, mu);
-		fopt = min(fitnesses)
-		fprintf(fileID, '%d,%d,%5.4f\n', iter, i*lambda, fopt);
+		fopt = min(fitnesses); % TODO delete this statement
+		fprintf(fileID, '%d,%d,%5.4f\n', iter, i*lambda, fopt); % TODO delete this statement
 	end
-	fprintf(fileID, '\n');
+	fprintf(fileID, '\n');% TODO delete this statement
 	[~,idx] = sort(fitnesses);
-    xopt = offspring(idx(1,1), :)
-	fopt = fitnesses(idx(1,1))
-    fclose(fileID);
+    xopt = offspring(idx(1,1), :);
+	fopt = fitnesses(idx(1,1));
+    fclose(fileID);% TODO delete this statement
+    toc
 end
 
 % Applies selection to a solution vector

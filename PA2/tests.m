@@ -1,5 +1,5 @@
 function tests(iters, eval)
-	fileID  = fopen('tests/test3.txt', 'a');
+	fileID  = fopen('tests/test5.txt', 'a');
 	
 	for i=1:iters
 		[~, fitness] = dekkers_jonkman_es(eval, i);

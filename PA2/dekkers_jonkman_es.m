@@ -1,13 +1,13 @@
 function [xopt,fopt] = dekkers_jonkman_es(eval_budget, iter)
 	tic
-	fileID  = fopen('tests/mean3.txt', 'a');% TODO delete this statement
+	fileID  = fopen('tests/mean5.txt', 'a');% TODO delete this statement
 	max_thickness = 10000; % search space [0,10000] nm
 	
-	mu = 100; % parent population size
-	lambda = 500; % offspring population size
+	mu = 50; % parent population size
+	lambda = 200; % offspring population size
 	layers = 30; % number of layers in multilayered system
 	
-	recomb_rate = 0.75; % recombination probability
+	recomb_rate = 0.5; % recombination probability
 	mut_rate = 0.25; % mutation probability
 	tau = 1/(sqrt(2*sqrt(layers))); % local learning rate (Schwefel) 
 	tauprime = 1/(sqrt(2*layers)); % global learning rate (Schwefel)

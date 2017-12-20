@@ -1,9 +1,9 @@
 function tests(iters, eval)
-    fileID  = fopen('res.txt', 'a');
+    fileID  = fopen('tests/test1.txt', 'a');
     
     for i=1:iters
         [~, fitness] = dekkers_jonkman_es(eval);
-        fprintf(fileID, 'Fitness of test %d: %5.4f\n', i, fitness);
+        fprintf(fileID, '%5.4f\n', fitness);
     end
     
 end

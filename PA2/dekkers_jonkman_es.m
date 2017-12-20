@@ -1,5 +1,5 @@
 function [xopt,fopt] = dekkers_jonkman_es(eval_budget)
-	tic
+	fileID  = fopen('tests/mean.txt', 'a');
 	max_thickness = 10000; % search space [0,10000] nm
 	
 	mu = 50; % parent population size
@@ -16,22 +16,27 @@ function [xopt,fopt] = dekkers_jonkman_es(eval_budget)
 	sigmas = zeros(mu,layers); % initialize individual sigmas
 	sigmas(1:mu,1:layers) = max_thickness/4; % 1/4th of the search space size
 	
+	fitnesses = zeros(1, lambda); % initialize fitnesses
+
 	% reproduction cycle
 	for i = 1:eval_budget/lambda
 		[offspring, newsigmas] = recombine(pop, sigmas, lambda, mu, layers, recomb_rate);
 		[offspring, newsigmas] = mutate(offspring, newsigmas, lambda, mut_rate, tau, tauprime);
 
 		% determine fitness of offspring
-		fitnesses = zeros(1, lambda);
 		for j = 1:lambda
 			fitnesses(1,j) = str2num(optical(offspring(j,:)));
 		end
 
-		% select
+		% select individuals for new population
 		[pop,sigmas] = select(offspring, fitnesses, newsigmas, mu, layers);
-		min(fitnesses)
+		fopt = min(fitnesses)
+		fprintf(fileID, '%5.4f,', fopt);
 	end
-	toc
+	fprintf(fileID, '\n');
+	[~,idx] = sort(fitnesses);
+	xopt = pop(idx(1,1));
+	fopt = fitnesses(idx(1,1));
 end
 
 % Applies selection to a solution vector
@@ -46,13 +51,13 @@ end
 function [offspring, newsigmas] = mutate(offspring, newsigmas, lambda, mut_rate, tau, tauprime)
 	for i=1:lambda
 		if rand() < mut_rate
-			newsigmas(i,:) = newsigmas(i,:)*exp(tauprime*randn + tau*randn);
+			newsigmas(i,:) = newsigmas(i,:) * exp(tauprime * randn + tau * randn);
 			offspring(i,:) = offspring(i,:) + newsigmas(i,:) * randn;
 		end
 	end
 end
 
-% Applies recombination to two
+% Applies recombination to two solution vectors
 function [offspring, newsigmas] = recombine(pop, sigmas, lambda, mu, layers, recomb_rate)
 	offspring = zeros(lambda, layers);
 	newsigmas = zeros(lambda, layers);

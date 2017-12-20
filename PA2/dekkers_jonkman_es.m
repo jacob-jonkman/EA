@@ -1,5 +1,5 @@
-function [xopt,fopt] = dekkers_jonkman_es(eval_budget)
-	fileID  = fopen('tests/mean.txt', 'a');
+function [xopt,fopt] = dekkers_jonkman_es(eval_budget, iter)
+	fileID  = fopen('tests/mean1.txt', 'a');
 	max_thickness = 10000; % search space [0,10000] nm
 	
 	mu = 50; % parent population size
@@ -31,12 +31,13 @@ function [xopt,fopt] = dekkers_jonkman_es(eval_budget)
 		% select individuals for new population
 		[pop,sigmas] = select(offspring, fitnesses, newsigmas, mu);
 		fopt = min(fitnesses)
-		fprintf(fileID, '%5.4f,', fopt);
+		fprintf(fileID, '%d,%d,%5.4f\n', iter, i*lambda, fopt);
 	end
 	fprintf(fileID, '\n');
 	[~,idx] = sort(fitnesses);
     xopt = offspring(idx(1,1), :)
 	fopt = fitnesses(idx(1,1))
+    fclose(fileID);
 end
 
 % Applies selection to a solution vector
